@@ -63,7 +63,7 @@ function App() {
       <h2>{data&&data.place}, {data&&data.country}</h2>
       <img src={data&&data.icon} alt="weather icon" />
       <h3>{data&&data.temperature} {data&&data.celsius?'C':'F'}, {data&&data.weather}</h3>
-      <button onClick={convertorCF}>convert temp</button>
+      <button onClick={convertorCF}>Convert Temperature</button>
     </>
   )
 }
