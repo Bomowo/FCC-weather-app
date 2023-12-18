@@ -18,7 +18,8 @@ function App() {
         setData ({
           place: json.name,
           country: json.sys.country,
-          temperature: json.main.temp,
+          temperature: Math.round(json.main.temp),
+          celsius: true,
           weather: json.weather[0].main
         })
 
@@ -26,12 +27,33 @@ function App() {
       .catch((error) => console.log(error))
   }
 
+  const convertorCF = () => {
+    if(data.celsius) {
+      let farenheit = (data.temperature * 9 / 5) + 32
+      farenheit = Math.round(farenheit)
+      setData((prevData)=> {
+        return {...prevData,
+          temperature: farenheit,
+          celsius: !prevData.celsius}
+      })
+    } else {
+      let celsius = (data.temperature - 32) * 5 / 9
+      celsius = Math.round(celsius)
+      setData((prevData)=> {
+        return {...prevData,
+          temperature: celsius,
+          celsius: !prevData.celsius}
+      })
+    }
+  } 
+
 
   return (
     <>
-      <h1>Hello World !</h1>
+      <h1>FCC Weather App</h1>
       <h2>{data&&data.place}, {data&&data.country}</h2>
-      <h3>{data&&data.temperature} C, {data&&data.weather}</h3> 
+      <h3>{data&&data.temperature} {data.celsius?'C':'F'}, {data&&data.weather}</h3>
+      <button onClick={convertorCF}>convert temp</button>
     </>
   )
 }
