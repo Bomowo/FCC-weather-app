@@ -3,7 +3,7 @@ import './App.css'
 
 
 function App() {
-  let request = ' https://weather-proxy.freecodecamp.rocks/api/current?lat=35&lon=139'
+  let request = 'https://weather-proxy.freecodecamp.rocks/api/current?lat=35&lon=139'
   const [data, setData] = useState(null)
 
   useEffect(() => {
@@ -20,7 +20,8 @@ function App() {
           country: json.sys.country,
           temperature: Math.round(json.main.temp),
           celsius: true,
-          weather: json.weather[0].main
+          weather: json.weather[0].main,
+          icon: json.weather[0].icon
         })
 
       })
@@ -52,6 +53,7 @@ function App() {
     <>
       <h1>FCC Weather App</h1>
       <h2>{data&&data.place}, {data&&data.country}</h2>
+      <img src={data.icon} alt="" />
       <h3>{data&&data.temperature} {data.celsius?'C':'F'}, {data&&data.weather}</h3>
       <button onClick={convertorCF}>convert temp</button>
     </>
