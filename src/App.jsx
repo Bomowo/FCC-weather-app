@@ -3,22 +3,30 @@ import './App.css'
 
 
 function App() {
-  let request = 'https://weather-proxy.freecodecamp.rocks/api/current?lat=35&lon=139'
   const [data, setData] = useState(null)
 
   useEffect(() => {
-    getWeather()
+
+    navigator.geolocation.getCurrentPosition(
+      function locationSuccess (data) {
+        let request = 'https://weather-proxy.freecodecamp.rocks/api/current?lat='+Math.round(data.coords.latitude)+'&lon='+Math.round(data.coords.longitude)
+        getWeather(request)
+      },
+      () => {
+        console.log('There was an error getting the current location')
+      }
+    )
   }, [])
 
-  const getWeather = async () => {
-    fetch(request)
+  const getWeather = async (link) => {
+    fetch(link)
       .then((response) => response.json())
       .then((json) => {
         console.log(json.name, json.sys.country, json.main.temp, json.weather[0].main)
         setData ({
           place: json.name,
           country: json.sys.country,
-          temperature: Math.round(json.main.temp),
+          temperature: json.main.temp.toFixed(1),
           celsius: true,
           weather: json.weather[0].main,
           icon: json.weather[0].icon
@@ -30,16 +38,16 @@ function App() {
 
   const convertorCF = () => {
     if(data.celsius) {
-      let farenheit = (data.temperature * 9 / 5) + 32
-      farenheit = Math.round(farenheit)
+      let farenheit = ((data.temperature * 9 / 5) + 32).toFixed(1)
+
       setData((prevData)=> {
         return {...prevData,
           temperature: farenheit,
           celsius: !prevData.celsius}
       })
     } else {
-      let celsius = (data.temperature - 32) * 5 / 9
-      celsius = Math.round(celsius)
+      let celsius = ((data.temperature - 32) * 5 / 9).toFixed(1)
+
       setData((prevData)=> {
         return {...prevData,
           temperature: celsius,
@@ -53,8 +61,8 @@ function App() {
     <>
       <h1>FCC Weather App</h1>
       <h2>{data&&data.place}, {data&&data.country}</h2>
-      <img src={data.icon} alt="" />
-      <h3>{data&&data.temperature} {data.celsius?'C':'F'}, {data&&data.weather}</h3>
+      <img src={data&&data.icon} alt="weather icon" />
+      <h3>{data&&data.temperature} {data&&data.celsius?'C':'F'}, {data&&data.weather}</h3>
       <button onClick={convertorCF}>convert temp</button>
     </>
   )
